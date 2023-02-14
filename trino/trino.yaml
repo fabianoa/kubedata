@@ -75,7 +75,7 @@ metadata:
   name: trino-worker
 spec:
   serviceName: trino-worker 
-  replicas: 10
+  replicas: 3
   selector:
     matchLabels:
       app: trino-worker
