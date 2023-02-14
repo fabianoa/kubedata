@@ -12,11 +12,10 @@ kubectl create secret generic my-s3-keys --from-literal=access-key='minio' --fro
 kubectl apply -n $NAMESPACE -f mariadb/maria_pvc.yaml
 kubectl apply -n $NAMESPACE -f mariadb/maria_deployment.yaml
 
-
-
 kubectl apply -n $NAMESPACE -f hive_metastore/hive-initschema.yaml
 
-kubectl create configmap -n $NAMESPACE metastore-cfg --dry-run --from-file=hive_metastore/metastore-site.xml -o yaml | kubectl apply -n $NAMESPACE  -f -
+kubectl create configmap metastore-cfg -n $NAMESPACE  --from-file=hive_metastore/metastore-site.xml  -o yaml | kubectl apply -n $NAMESPACE -f -
+
 kubectl apply -n $NAMESPACE -f hive_metastore/metastore.yaml
 
 
