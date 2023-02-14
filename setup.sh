@@ -16,7 +16,7 @@ kubectl apply -n $NAMESPACE -f mariadb/maria_deployment.yaml
 
 kubectl apply -n $NAMESPACE -f hive_metastore/hive-initschema.yaml
 
-kubectl create configmap -n $NAMESPACE metastore-cfg --dry-run --from-file=hive_metastore/metastore-site.xml | kubectl apply -n $NAMESPACE  -f -
+kubectl create configmap -n $NAMESPACE metastore-cfg --dry-run --from-file=hive_metastore/metastore-site.xml -o yaml | kubectl apply -n $NAMESPACE  -f -
 kubectl apply -n $NAMESPACE -f hive_metastore/metastore.yaml
 
 
