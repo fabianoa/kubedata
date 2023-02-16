@@ -7,7 +7,7 @@ version=0.10.0
 # Spark version compatible to the Zeppelin version
 spark_version=3.1.3
 # Hadoop major version
-hadoop_version=3.2.0
+hadoop_version=3.2
 # Hadoop minor version
 hadoop_minor_version=0
 # AWS SDK version compatible to the Hadoop version
