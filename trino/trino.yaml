@@ -9,6 +9,21 @@ spec:
   selector:
     app: trino-coordinator
 ---
+apiVersion: v1
+kind: Ingress
+metadata:
+  name: trino-ui
+spec:
+  rules:
+  - host: trino.local
+    http:
+      paths:
+      - backend:
+          serviceName: trino
+          servicePort: 8080
+        path: /
+        pathType: Prefix
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
