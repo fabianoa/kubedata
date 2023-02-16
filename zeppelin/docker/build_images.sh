@@ -11,7 +11,7 @@ hadoop_version=3.2
 # Hadoop minor version
 hadoop_minor_version=0
 # AWS SDK version compatible to the Hadoop version
-aws_sdk_version=1.11.271
+aws_sdk_version=1.11.375
 
 cd zeppelin-distribution-binary
 docker build --build-arg version=$version -t ${repo}/zeppelin-distribution:${version} .

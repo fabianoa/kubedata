@@ -60,6 +60,8 @@ COPY --from=zeppelin-distribution /opt/zeppelin/bin ${ZEPPELIN_HOME}/bin
 COPY --from=zeppelin-distribution /opt/zeppelin/lib ${ZEPPELIN_HOME}/lib
 COPY --from=zeppelin-distribution /opt/zeppelin/plugins ${ZEPPELIN_HOME}/plugins
 COPY --from=zeppelin-distribution /opt/zeppelin/interpreter/zeppelin-interpreter-shaded-${version}.jar ${ZEPPELIN_HOME}/interpreter/zeppelin-interpreter-shaded-${version}.jar
+COPY --from=zeppelin-distribution /opt/zeppelin/interpreter/jdbc/trino-jdbc.jar ${ZEPPELIN_HOME}/interpreter/jdbc/trino-jdbc.jar
+
 # copy example notebooks
 COPY --from=zeppelin-distribution /opt/zeppelin/notebook ${ZEPPELIN_HOME}/notebook
 # copy k8s files

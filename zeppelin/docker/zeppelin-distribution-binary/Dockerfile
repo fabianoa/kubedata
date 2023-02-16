@@ -21,8 +21,8 @@ RUN wget https://downloads.apache.org/zeppelin/zeppelin-${version}/zeppelin-${ve
     mkdir -p /opt/zeppelin && \
     tar -xf zeppelin-${version}-bin-all.tgz --strip-components=1 --directory /opt/zeppelin
 
-RUN https://repo1.maven.org/maven2/io/trino/trino-jdbc/375/trino-jdbc-375.jar && \
-    mv trino-jdbc-375.jar /opt/zeppelin/interpreter/jdbc/trino-jdbc.jar
+RUN wget https://github.com/gabrielrcouto/presto/releases/download/0.225/presto-jdbc-0.225-SNAPSHOT.jar  && \
+    mv presto-jdbc-0.225-SNAPSHOT.jar  /opt/zeppelin/interpreter/jdbc/trino-jdbc.jar
 
 #Maybe not necessary, because we do not want to run Zeppelin with this image.
 ENV LANG=en_US.UTF-8 \
