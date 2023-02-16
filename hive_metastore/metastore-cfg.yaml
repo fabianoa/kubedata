@@ -48,7 +48,7 @@ data:
             </property>
            <property>
                 <name>fs.s3a.endpoint</name>
-                <value>http://n241d028079.fast.prevnet/value>
+                <value>http://n241d028079.fast.prevnet</value>
             </property>
             <property>
                 <name>fs.s3a.fast.upload</name>

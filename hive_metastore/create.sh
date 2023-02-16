@@ -17,3 +17,6 @@ while [[ $(kubectl get pods -n $NAMESPACE -l job-name=hive-initschema -o jsonpat
 
 kubectl apply -n $NAMESPACE -f metastore-cfg.yaml
 kubectl apply -n $NAMESPACE -f metastore.yaml
+
+# wait for mysql pod being ready.
+while [[ $(kubectl get pods -n $NAMESPACE -l app=metastore -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do echo "waiting for metastore pod being ready" && sleep 1; done
