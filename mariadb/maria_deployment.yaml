@@ -42,8 +42,8 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-            name: mariadb-creds
-            key: password
+              name: mariadb-creds
+              key: password
         ports:
         - containerPort: 3306
           name: mysql
@@ -52,7 +52,7 @@ spec:
           mountPath: /var/lib/mysql
         resources:
           requests:
-            memory: "8G"
+            memory: "4G"
             cpu: 2
       volumes:
       - name: mariadb-for-hive
