@@ -21,7 +21,7 @@ RUN wget https://downloads.apache.org/zeppelin/zeppelin-${version}/zeppelin-${ve
     mkdir -p /opt/zeppelin && \
     tar -xf zeppelin-${version}-bin-all.tgz --strip-components=1 --directory /opt/zeppelin
 
-RUN https://repo1.maven.org/maven2/io/trino/trino-jdbc/375/trino-jdbc-375.jar && \
+RUN wget https://repo1.maven.org/maven2/io/trino/trino-jdbc/375/trino-jdbc-375.jar && \
     mv trino-jdbc-375.jar /opt/zeppelin/interpreter/jdbc/trino-jdbc.jar
 
 #Maybe not necessary, because we do not want to run Zeppelin with this image.
