@@ -28,6 +28,7 @@ data:
     task.writer-count=4
     discovery-server.enabled=true
     discovery.uri=http://trino:8080
+    protocol.v1.alternate-header-name=Presto
   config.properties.worker: |-
     coordinator=false
     http-server.http.port=8080
@@ -37,6 +38,7 @@ data:
     query.max-stage-count=200
     task.writer-count=4
     discovery.uri=http://trino:8080
+    protocol.v1.alternate-header-name=Presto
   node.properties: |-
     node.environment=test
     spiller-spill-path=/tmp
