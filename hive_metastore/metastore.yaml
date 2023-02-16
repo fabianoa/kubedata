@@ -47,7 +47,7 @@ spec:
           subPath: metastore-site.xml
         resources:
           requests:
-            memory: "8G"
+            memory: "4G"
             cpu: 2
         imagePullPolicy: Always
       volumes:
