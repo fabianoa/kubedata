@@ -7,7 +7,7 @@ set -e
 
 NAMESPACE=$1
 
-../mariadb/create.sh $NAMESPACE
+/bin/bash ../mariadb/create.sh $NAMESPACE
 
 # create metastore db schemas.
 kubectl apply -n $NAMESPACE -f hive-initschema.yaml
