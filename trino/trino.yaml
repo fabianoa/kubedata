@@ -9,7 +9,7 @@ spec:
   selector:
     app: trino-coordinator
 ---
-apiVersion: v1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: trino-ui
