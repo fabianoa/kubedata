@@ -123,8 +123,7 @@ spec:
       - name: zeppelin-server
         image: fabianoa/zeppelin-server:0.10.1
         #command: ["ls"]
-        command: ["sh", "-c"] 
-        args: ["wget https://repo1.maven.org/maven2/io/trino/trino-jdbc/375/trino-jdbc-375.jar","mv trino-jdbc-375.jar /opt/zeppelin/interpreter/jdbc/trino-jdbc.jar","$(ZEPPELIN_HOME)/bin/zeppelin.sh"]
+        command: ["sh", "-c", "$(ZEPPELIN_HOME)/bin/zeppelin.sh"]
         lifecycle:
           preStop:
             exec:

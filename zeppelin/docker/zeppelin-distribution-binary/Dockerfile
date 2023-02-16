@@ -1,8 +1,6 @@
 FROM ubuntu:20.04
 # Metainformation
 LABEL org.opencontainers.image.authors="Apache Software Foundation <dev@zeppelin.apache.org>"
-LABEL org.opencontainers.image.vendor="Thinkport GmbH <kontakt@thinkport.digital>"
-LABEL org.opencontainers.image.source https://github.com/ThinkportRepo/zeppelin
 # Zeppelin version
 ARG version=0.10.0
 
@@ -22,6 +20,9 @@ RUN wget https://downloads.apache.org/zeppelin/zeppelin-${version}/zeppelin-${ve
     sha512sum -c zeppelin-${version}-bin-all.tgz.sha512 && \
     mkdir -p /opt/zeppelin && \
     tar -xf zeppelin-${version}-bin-all.tgz --strip-components=1 --directory /opt/zeppelin
+
+RUN https://repo1.maven.org/maven2/io/trino/trino-jdbc/375/trino-jdbc-375.jar && \
+    mv trino-jdbc-375.jar /opt/zeppelin/interpreter/jdbc/trino-jdbc.jar
 
 #Maybe not necessary, because we do not want to run Zeppelin with this image.
 ENV LANG=en_US.UTF-8 \
