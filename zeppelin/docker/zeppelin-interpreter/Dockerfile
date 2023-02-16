@@ -25,8 +25,6 @@ LABEL maintainer="Apache Software Foundation <dev@zeppelin.apache.org>"
 
 # Metainformation
 LABEL org.opencontainers.image.authors="Apache Software Foundation <dev@zeppelin.apache.org>"
-LABEL org.opencontainers.image.vendor="Thinkport GmbH <kontakt@thinkport.digital>"
-LABEL org.opencontainers.image.source https://github.com/ThinkportRepo/zeppelin
 
 
 ENV VERSION="${version}" \
