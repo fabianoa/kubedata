@@ -48,7 +48,7 @@ data:
     connector.name=hive-hadoop2
     hive.metastore.uri=thrift://metastore:9083
     hive.allow-drop-table=true
-    hive.max-partitions-per-scan=1000000
+    # hive.max-partitions-per-scan=1000000
     hive.s3.endpoint=n241d028079.fast.prevnet
     hive.s3.path-style-access=true
     hive.s3.ssl.enabled=false
@@ -56,7 +56,7 @@ data:
   iceberg.properties: |-
     connector.name=iceberg
     hive.metastore.uri=thrift://metastore:9083
-    hive.max-partitions-per-scan=1000000
+    # hive.max-partitions-per-scan=1000000
     hive.s3.endpoint=n241d028079.fast.prevnet
     hive.s3.path-style-access=true
     hive.s3.ssl.enabled=false
