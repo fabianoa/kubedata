@@ -1,0 +1,43 @@
+     
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ranger-admin
+spec:
+  ports:
+  - port: 6080
+    targetPort: 6080
+  selector:
+    app: ranger-admin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ranger-admin
+spec:
+  selector:
+    matchLabels:
+      app: ranger-admin
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ranger-admin
+    spec:
+      containers:
+      - name: ranger-admin
+        image: "fabianoa/trino-ranger:v3.0"
+        command: ["sh", "-c", "$(ZEPPELIN_HOME)/bin/zeppelin.sh"]
+        ports:
+        - containerPort: 6080
+          name: ranger-admin
+        volumeMounts:
+        - name: ranger-cfg
+          mountPath: /root/ranger-admin/install.properties
+          subPath: install.properties
+        resources:
+          requests:
+            memory: "4G"
+            cpu: 2
