@@ -105,8 +105,11 @@ data:
     # This location should be relative to the parent of the directory containing
     # the plugin installation files.
     #
+
+    COMPONENT_PLUGIN_DIR_NAME=/usr/lib/trino/plugin/ranger
     COMPONENT_INSTALL_DIR_NAME=/etc/trino
 
+    
     # Enable audit logs to Solr
     #Example
     #XAAUDIT.SOLR.ENABLE=true
