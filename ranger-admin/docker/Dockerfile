@@ -13,5 +13,10 @@ WORKDIR /root
 ADD https://github.com/aakashnand/trino-ranger-demo/releases/download/trino-ranger-demo-v1.0/ranger-2.1.0-admin.tar.gz /root
 
 RUN tar xvf ranger-2.1.0-admin.tar.gz 
+RUN mv ranger-2.1.0-admin  ranger-admin
+
+COPY entrypoint.sh /root/entrypoint.sh
+RUN chmod +x /root/entrypoint.sh
+
 
 ENV JAVA_HOME=/usr/lib/jvm/zulu11
