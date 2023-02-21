@@ -1,6 +1,6 @@
 FROM trinodb/trino:384
 
-ENV RANGER_VERSION 2.3.0
+ENV RANGER_VERSION 2.1.0
 
 WORKDIR /root
 
