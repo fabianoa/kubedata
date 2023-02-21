@@ -1,12 +1,8 @@
 FROM trinodb/trino:384
 
-ENV RANGER_VERSION 2.1.0
-
-RUN apt-get -y install sudo wget bc python apt-transport-https gnupg
-
 WORKDIR /root
 
-RUN  wget https://github.com/aakashnand/trino-ranger-demo/releases/download/trino-ranger-demo-v1.0/ranger-2.1.0-trino-plugin.tar.gz
+RUN  curl https://github.com/aakashnand/trino-ranger-demo/releases/download/trino-ranger-demo-v1.0/ranger-2.1.0-trino-plugin.tar.gz
 
 RUN tar xvf ranger-2.1.0-trino-plugin.tar.gz
 
