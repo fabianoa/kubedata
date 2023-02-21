@@ -26,8 +26,8 @@ metadata:
   name: ranger-db
 spec:
   ports:
-  - port: 13306
-    targetPort: 3306
+  - port: 5432
+    targetPort: 5432
   selector:
     app: psql01
 ---

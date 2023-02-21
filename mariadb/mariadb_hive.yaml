@@ -27,7 +27,7 @@ metadata:
   name: metastore-db
 spec:
   ports:
-  - port: 13306
+  - port: 3306
     targetPort: 3306
   selector:
     app: mysql
