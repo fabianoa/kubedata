@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: ranger-admin
-        image: "fabianoa/trino-ranger:v3.0"
+        image: "fabianoa/trino-ranger:v3.1"
         command: ["sh", "-c", "/root/entrypoint.sh"]
         ports:
         - containerPort: 6080
