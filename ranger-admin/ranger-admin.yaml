@@ -29,7 +29,7 @@ spec:
       containers:
       - name: ranger-admin
         image: "fabianoa/trino-ranger:v3.0"
-        command: ["sh", "-c", "$(ZEPPELIN_HOME)/bin/zeppelin.sh"]
+        command: ["sh", "-c", "/root/entrypoint.sh"]
         ports:
         - containerPort: 6080
           name: ranger-admin
