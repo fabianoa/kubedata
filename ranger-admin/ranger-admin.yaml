@@ -41,7 +41,7 @@ spec:
           requests:
             memory: "4G"
             cpu: 2
-        volumes:
+      volumes:
         - name: ranger-cfg-vol
           configMap:
             name: ranger-cfg
