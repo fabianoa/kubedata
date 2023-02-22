@@ -84,7 +84,7 @@ spec:
           subPath: install.properties
         resources:
           requests:
-            memory: "2G"
+            memory: "4G"
             cpu: 1
         imagePullPolicy: Always
       volumes:
