@@ -62,9 +62,6 @@ spec:
               key: secret-key
         volumeMounts:
         - name: trino-cfg-vol
-          mountPath: /etc/trino/jvm.config
-          subPath: jvm.config
-        - name: trino-cfg-vol
           mountPath: /etc/trino/config.properties
           subPath: config.properties.coordinator
         - name: trino-cfg-vol
@@ -127,9 +124,6 @@ spec:
               name: my-s3-keys
               key: secret-key
         volumeMounts:
-        - name: trino-cfg-vol
-          mountPath: /etc/trino/jvm.config
-          subPath: jvm.config
         - name: trino-cfg-vol
           mountPath: /etc/trino/config.properties
           subPath: config.properties.worker
