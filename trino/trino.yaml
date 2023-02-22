@@ -62,6 +62,9 @@ spec:
               key: secret-key
         volumeMounts:
         - name: trino-cfg-vol
+          mountPath: /etc/trino/jvm.config
+          subPath: jvm.config
+        - name: trino-cfg-vol
           mountPath: /etc/trino/config.properties
           subPath: config.properties.coordinator
         - name: trino-cfg-vol
@@ -81,7 +84,7 @@ spec:
           subPath: install.properties
         resources:
           requests:
-            memory: "4G"
+            memory: "2G"
             cpu: 1
         imagePullPolicy: Always
       volumes:
