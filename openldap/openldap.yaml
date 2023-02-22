@@ -22,7 +22,7 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: openldap
+        app: openldap
     spec:
       containers:
         - name: openldap
