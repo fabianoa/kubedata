@@ -11,16 +11,17 @@ stringData:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: openldap
+  name: openldap-srv
 spec:
   selector:
-    app: openldap
+    matchLabels:
+      app: openldap-srv
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: openldap
+        app: openldap-srv
     spec:
       containers:
         - name: openldap
@@ -59,4 +60,4 @@ spec:
       port: 1389
       targetPort: tcp-ldap
   selector:
-    app: openldap
+    app: openldap-srv
