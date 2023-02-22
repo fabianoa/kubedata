@@ -42,7 +42,7 @@ spec:
       containers:
       - name: trino
         #image: trinodb/trino:355
-        image: fabianoa/trino:384
+        image: fabianoa/trino:389
         command: ["/bin/sh", "-c"]
         args:
           - /root/ranger-trino-plugin/enable-trino-plugin.sh;
@@ -112,7 +112,7 @@ spec:
       containers:
       - name: trino
         #image: trinodb/trino:355
-        image: fabianoa/trino:384
+        image: fabianoa/trino:389
         ports:
         - containerPort: 8080
         env:

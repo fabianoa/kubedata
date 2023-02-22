@@ -99,7 +99,7 @@ data:
     REPOSITORY_NAME=trino
 
     # Configure INSTALL_ENV=docker if running trino in docker environment
-    # INSTALL_ENV=docker
+    INSTALL_ENV=docker
     #
     # Name of the directory where the component's lib and conf directory exist.
     # This location should be relative to the parent of the directory containing
@@ -109,7 +109,7 @@ data:
     COMPONENT_PLUGIN_DIR_NAME=/usr/lib/trino/plugin/ranger
     COMPONENT_INSTALL_DIR_NAME=/etc/trino
 
-    
+
     # Enable audit logs to Solr
     #Example
     #XAAUDIT.SOLR.ENABLE=true
