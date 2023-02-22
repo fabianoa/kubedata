@@ -81,8 +81,8 @@ spec:
           subPath: install.properties
         resources:
           requests:
-            memory: "2G"
-            cpu: 1
+            memory: "6G"
+            cpu: 2
         imagePullPolicy: Always
       volumes:
         - name: trino-cfg-vol
