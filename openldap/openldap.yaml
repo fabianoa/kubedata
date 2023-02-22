@@ -60,4 +60,4 @@ spec:
       port: 1389
       targetPort: tcp-ldap
   selector:
-    app.kubernetes.io/name: openldap
+    app: openldap
