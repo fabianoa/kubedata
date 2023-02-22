@@ -14,8 +14,7 @@ metadata:
   name: openldap
 spec:
   selector:
-    matchLabels:
-      app: openldap
+    app: openldap
   strategy:
     type: Recreate
   template:
