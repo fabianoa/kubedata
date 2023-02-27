@@ -1193,13 +1193,13 @@ data:
         "properties": {
           "SPARK_HOME": {
             "name": "SPARK_HOME",
-            "value": "/usr/lib/spark-current",
+            "value": "/spark",
             "type": "string",
             "description": "Location of spark distribution"
           },
           "spark.master": {
             "name": "spark.master",
-            "value": "local[*]",
+            "value": "k8s://https://kubernetes.default.svc",
             "type": "string",
             "description": "Spark master uri. local | yarn-client | yarn-cluster | spark master address of standalone mode, ex) spark://master_host:7077"
           },
@@ -1253,7 +1253,7 @@ data:
           },
           "spark.jars": {
             "name": "spark.jars",
-            "value": "",
+            "value": "/spark/jars/hadoop-aws-3.2.0.jar,/spark/jars/aws-java-sdk-bundle-1.11.375.jar",
             "type": "string",
             "description": "Comma-separated list of jars to include on the driver and executor classpaths. Globs are allowed."
           },
@@ -1400,6 +1400,42 @@ data:
             "value": true,
             "type": "checkbox",
             "description": "Show short types instead of full, e.g. List\u003cString\u003e or kotlin.collections.List\u003ckotlin.String\u003e"
+          },
+          "spark.hadoop.fs.s3a.endpoint": {
+            "name": "spark.hadoop.fs.s3a.endpoint",
+            "value": "n241d028079.fast.prevnet",
+            "type": "string",
+            "description": ""
+          },
+          "spark.hadoop.fs.s3a.connection.ssl.enabled": {
+            "name": "spark.hadoop.fs.s3a.connection.ssl.enabled",
+            "value": "false",
+            "type": "string",
+            "description": ""
+          },
+          "spark.hadoop.fs.s3a.path.style.access": {
+            "name": "spark.hadoop.fs.s3a.path.style.access",
+            "value": "true",
+            "type": "string",
+            "description": ""
+          },
+          "spark.hadoop.fs.s3a.impl": {
+            "name": "spark.hadoop.fs.s3a.impl",
+            "value": "org.apache.hadoop.fs.s3a.S3AFileSystem",
+            "type": "string",
+            "description": ""
+          },
+          "spark.hadoop.fs.s3a.access.key": {
+            "name": "spark.hadoop.fs.s3a.access.key",
+            "value": "minio",
+            "type": "string",
+            "description": ""
+          },
+          "spark.hadoop.fs.s3a.secret.key": {
+            "name": "spark.hadoop.fs.s3a.access.key",
+            "value": "minio123",
+            "type": "password",
+            "description": ""
           }
         },
         "status": "READY",
@@ -2829,13 +2865,13 @@ data:
         "properties": {
           "default.url": {
             "name": "default.url",
-            "value": "jdbc:trino://trino-coordinator:8080",
+            "value": "jdbc:presto://trino:8080",
             "type": "string",
             "description": "The URL for JDBC."
           },
           "default.user": {
             "name": "default.user",
-            "value": "hadoop",
+            "value": "root",
             "type": "string",
             "description": "The JDBC user name"
           },
@@ -2847,7 +2883,7 @@ data:
           },
           "default.driver": {
             "name": "default.driver",
-            "value": "io.trino.jdbc.TrinoDriver",
+            "value": "com.facebook.presto.jdbc.PrestoDriver",
             "type": "string",
             "description": "JDBC Driver Name"
           },
@@ -3407,5 +3443,5 @@ data:
       }
     ]
   }
-  
+
 ---
