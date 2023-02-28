@@ -1253,7 +1253,7 @@ data:
             },
             "spark.jars": {
               "name": "spark.jars",
-              "value": "/spark/jars/hadoop-aws-3.2.0.jar,/spark/jars/aws-java-sdk-bundle-1.11.375.jar",
+              "value": "/spark/jars/hadoop-aws-3.2.0.jar,/spark/jars/aws-java-sdk-bundle-1.11.271.jar",
               "type": "string",
               "description": "Comma-separated list of jars to include on the driver and executor classpaths. Globs are allowed."
             },

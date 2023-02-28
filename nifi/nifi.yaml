@@ -1,3 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nifi-creds
+type: Opaque
+stringData:
+  password: 'nifi'
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,8 +34,8 @@ spec:
           - name: SINGLE_USER_CREDENTIALS_PASSWORD
             valueFrom:
               secretKeyRef:
-                key: nifi_password
-                name: credentials
+                key: nifi-creds
+                name: password
 ---
 apiVersion: v1
 kind: Service
