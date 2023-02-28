@@ -90,7 +90,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: zeppelin-interpreter-conf-map
+  name: zeppelin-interpreter-conf
 data:
   interpreter.json: |
     {
