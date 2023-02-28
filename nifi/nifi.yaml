@@ -33,9 +33,9 @@ spec:
             value: "admin"
           - name: SINGLE_USER_CREDENTIALS_PASSWORD
             valueFrom:
-              secretKeyRef:
-                key: nifi-creds
-                name: password
+            secretKeyRef:
+              name: nifi-creds
+              key: password
 ---
 apiVersion: v1
 kind: Service
