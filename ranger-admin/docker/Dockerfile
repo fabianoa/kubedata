@@ -14,6 +14,7 @@ RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0xB19
 WORKDIR /root
 ADD https://github.com/aakashnand/trino-ranger-demo/releases/download/trino-ranger-demo-v1.0/ranger-2.1.0-admin.tar.gz /root
 
+
 RUN tar xvf ranger-2.1.0-admin.tar.gz 
 RUN mv ranger-2.1.0-admin  ranger-admin
 
