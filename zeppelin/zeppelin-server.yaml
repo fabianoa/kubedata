@@ -24,6 +24,12 @@ spec:
           items:
           - key: nginx.conf
             path: nginx.conf
+      - name: interpreter-conf
+        configMap:
+          name: zeppelin-interpreter-conf-map 
+          items:
+          - key: interpreter.json
+            path: interpreter.json
       - name: zeppelin-server-notebook-volume
         persistentVolumeClaim:
           claimName: zeppelin-notebook
@@ -67,6 +73,9 @@ spec:
            mountPath: /zeppelin/notebook
          - name: zeppelin-server-conf                # configure this to persist Zeppelin configuration
            mountPath: /zeppelin/conf
+         - name: interpreter-conf
+           mountPath: /zeppelin/conf/interpreter-conf
+           subPath: interpreter-conf
       #  - name: zeppelin-server-custom-k8s          # configure this to mount customized Kubernetes spec for interpreter
       #    mountPath: /zeppelin/k8s
       - name: zeppelin-server-gateway
