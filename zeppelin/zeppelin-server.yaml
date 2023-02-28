@@ -71,7 +71,7 @@ spec:
          #- name: zeppelin-server-conf                # configure this to persist Zeppelin configuration
          #  mountPath: /zeppelin/conf
          - name: interpreter-conf
-           mountPath:  /zeppelin/conf/interpreter.json
+           mountPath:  /opt/zeppelin/conf/interpreter.json
            subPath: interpreter.json
       #  - name: zeppelin-server-custom-k8s          # configure this to mount customized Kubernetes spec for interpreter
       #    mountPath: /zeppelin/k8s
