@@ -6,7 +6,7 @@ metadata:
 data:
   jvm.config: |-
     -server
-    -Xmx16G
+    -Xmx6G
     -XX:-UseBiasedLocking
     -XX:+UseG1GC
     -XX:G1HeapRegionSize=32M
@@ -35,7 +35,6 @@ data:
     file.password-file=/etc/trino/password.db
   password.db: |-
     admin:$2y$10$bU06p6/KuLrDHxGTA53xhuz.qmhlJJLLQ2bI1DnIpe2p6dbzN7B7G
-    # trinoadmin
   config.properties.worker: |-
     coordinator=false
     http-server.http.port=8080
