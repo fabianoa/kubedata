@@ -8,14 +8,8 @@ spec:
       containers:
       - name: hivemeta
         image: fabianoa/hive-metastore:3.0.0
-        env:
-        - name: PASSWORD
-          valueFrom:
-           secretKeyRef:
-             name: mariadb-creds
-             key: password
         command: ["/opt/apache-hive-metastore-3.0.0-bin/bin/schematool"]
         args: ["--verbose" ,"-initSchema" , "-dbType", "mysql" , "-userName", "root",
-          "-passWord", "$(PASSWORD)" , "-url", "jdbc:mysql://metastore-db:13306/metastore_db?createDatabaseIfNotExist=true"]
+          "-passWord", "mypass" , "-url", "jdbc:mysql://metastore-db:3306/metastore_db?createDatabaseIfNotExist=true"]
       restartPolicy: Never
   backoffLimit: 4
