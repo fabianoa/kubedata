@@ -21,9 +21,9 @@ data:
     coordinator=true
     node-scheduler.include-coordinator=false
     http-server.http.port=8080
-    # query.max-memory=200GB
-    # query.max-memory-per-node=8GB
-    # query.max-total-memory-per-node=10GB
+    query.max-memory=200GB
+    query.max-memory-per-node=8GB
+    query.max-total-memory-per-node=10GB
     query.max-stage-count=200
     task.writer-count=4
     discovery.uri=http://trino:8080
@@ -40,9 +40,9 @@ data:
   config.properties.worker: |-
     coordinator=false
     http-server.http.port=8080
-    # query.max-memory=200GB
-    # query.max-memory-per-node=10GB
-    # query.max-total-memory-per-node=10GB
+    query.max-memory=200GB
+    query.max-memory-per-node=10GB
+    query.max-total-memory-per-node=10GB
     query.max-stage-count=200
     task.writer-count=4
     discovery.uri=http://trino:8080
