@@ -30,6 +30,7 @@ data:
     # Usando load Balance Ingress
     http-server.process-forwarded=true
     http-server.authentication.type=PASSWORD
+    internal-communication.shared-secret=dac4qHmfbg0q1xTrdf/jRVtRtfPWhj9C02C1TffbRHESVlD4A/YNwJp/8TIHBcB6pNB+UpaG0hOKfbpRiPowO4wps4tZlIKPeUDJqnLPVYESZ6rsJV3j0f0LMSZLpMKA5jPuGSvicRmA0IUXMkCkF01VeEdD8rP04uev5N+JUDM6XM8JIhFKSprzCPAJxfZk2rsNvi8W6ObicGOOAMVOx6vnJOEHZvTj5NKA1uGabgkslW83zv5LmuNdoicXjnAbrm6ie5GXNX6IHPH1TgBbBJIouA62HMPENPfqUcrY0ZuqHPxoFRqp0AN0pp2N+vCRNPbTBBJVprp8Fmgo389IZkzcZY62I+KWTGHuDrSvJWjx6RZKVhMlIUGKA+pVa/o3I5+b3vWNq6+eUA8LjlVU5xpt0nYyVKNSpp2uvw8QbJcE49NmIfei8TxI2OLMXNjGy6UFmNk3Ymq0XMjdQ3BMVnXTNzy+GTmco3C1bkAfGpgJIWI2QbYdJHLlWWaEiLp4K1VqP4CLNc7WWLImQZMVKe9o5estMBORxfCY+S+7MBEqU1fnyuVAxbqwjUcP22W4X5LwuAFYm1QF6peUjEa7zLxUolgXSDMr0810LjkCkGSWtSLtdFcrOHIZ2wz7yqW74LAYdCBtYJfSO6f1NFHzNvqDvSsyQs/vrjjcBUJF6Zk=
   password-authenticator.properties: |-
     password-authenticator.name=file
     file.password-file=/etc/trino/password.db
@@ -45,7 +46,7 @@ data:
     query.max-stage-count=200
     task.writer-count=4
     discovery.uri=http://trino:8080
-    protocol.v1.alternate-header-name=Presto
+    internal-communication.shared-secret=dac4qHmfbg0q1xTrdf/jRVtRtfPWhj9C02C1TffbRHESVlD4A/YNwJp/8TIHBcB6pNB+UpaG0hOKfbpRiPowO4wps4tZlIKPeUDJqnLPVYESZ6rsJV3j0f0LMSZLpMKA5jPuGSvicRmA0IUXMkCkF01VeEdD8rP04uev5N+JUDM6XM8JIhFKSprzCPAJxfZk2rsNvi8W6ObicGOOAMVOx6vnJOEHZvTj5NKA1uGabgkslW83zv5LmuNdoicXjnAbrm6ie5GXNX6IHPH1TgBbBJIouA62HMPENPfqUcrY0ZuqHPxoFRqp0AN0pp2N+vCRNPbTBBJVprp8Fmgo389IZkzcZY62I+KWTGHuDrSvJWjx6RZKVhMlIUGKA+pVa/o3I5+b3vWNq6+eUA8LjlVU5xpt0nYyVKNSpp2uvw8QbJcE49NmIfei8TxI2OLMXNjGy6UFmNk3Ymq0XMjdQ3BMVnXTNzy+GTmco3C1bkAfGpgJIWI2QbYdJHLlWWaEiLp4K1VqP4CLNc7WWLImQZMVKe9o5estMBORxfCY+S+7MBEqU1fnyuVAxbqwjUcP22W4X5LwuAFYm1QF6peUjEa7zLxUolgXSDMr0810LjkCkGSWtSLtdFcrOHIZ2wz7yqW74LAYdCBtYJfSO6f1NFHzNvqDvSsyQs/vrjjcBUJF6Zk=
   node.properties: |-
     node.environment=test
     spiller-spill-path=/tmp
