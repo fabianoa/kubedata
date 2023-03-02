@@ -21,7 +21,8 @@ data:
     coordinator=true
     node-scheduler.include-coordinator=false
     http-server.http.port=8080
-    query.max-memory=200GB
+    query.max-memory=10GB
+    query.max-memory-per-node=1GB
     # query.max-memory-per-node=8GB
     query.max-stage-count=200
     task.writer-count=4
@@ -38,7 +39,8 @@ data:
   config.properties.worker: |-
     coordinator=false
     http-server.http.port=8080
-    query.max-memory=200GB
+    query.max-memory=10GB
+    query.max-memory-per-node=1GB
     # query.max-memory-per-node=4GB
     query.max-stage-count=200
     task.writer-count=4
