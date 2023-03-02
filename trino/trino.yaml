@@ -88,7 +88,7 @@ spec:
         resources:
           requests:
             memory: "4G"
-            cpu: 1
+            cpu: 2
         imagePullPolicy: Always
       volumes:
         - name: trino-cfg-vol
