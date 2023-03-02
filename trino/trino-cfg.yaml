@@ -6,6 +6,7 @@ metadata:
 data:
   jvm.config: |-
     -server
+    -Xms:2048M
     -XX:-UseBiasedLocking
     -XX:+UseG1GC
     -XX:G1HeapRegionSize=32M
