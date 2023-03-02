@@ -26,10 +26,16 @@ data:
     # query.max-total-memory-per-node=10GB
     query.max-stage-count=200
     task.writer-count=4
-    discovery-server.enabled=true
     discovery.uri=http://trino:8080
-    protocol.v1.alternate-header-name=Presto
+    # Usando load Balance Ingress
     http-server.process-forwarded=true
+    http-server.authentication.type=PASSWORD
+  password-authenticator.properties: |-
+    password-authenticator.name=file
+    file.password-file=/etc/trino/password.db
+  password.db: |-
+    admin:$2y$10$bU06p6/KuLrDHxGTA53xhuz.qmhlJJLLQ2bI1DnIpe2p6dbzN7B7G
+    # trinoadmin
   config.properties.worker: |-
     coordinator=false
     http-server.http.port=8080

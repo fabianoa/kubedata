@@ -65,6 +65,12 @@ spec:
           mountPath: /etc/trino/config.properties
           subPath: config.properties.coordinator
         - name: trino-cfg-vol
+          mountPath: /etc/trino/password-authenticator.properties
+          subPath: password-authenticator.properties
+        - name: trino-cfg-vol
+          mountPath: /etc/trino/password.db
+          subPath: password.db
+        - name: trino-cfg-vol
           mountPath: /etc/trino/node.properties
           subPath: node.properties
         - name: trino-cfg-vol
