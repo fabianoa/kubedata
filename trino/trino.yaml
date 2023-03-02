@@ -175,13 +175,13 @@ kind: Pod
 metadata:
   name: trino-cli
 spec:
+  hostAliases:
+  - ip: "10.190.24.157"
+    hostnames:
+    - trino.local
   containers:
   - name: trino-cli
     image: trinodb/trino:355
     command: ["tail", "-f", "/dev/null"]
     imagePullPolicy: Always
   restartPolicy: Always
-  hostAliases:
-  - ip: 10.190.24.157
-    hostnames:
-    - trino.local
