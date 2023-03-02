@@ -152,7 +152,7 @@ spec:
           mountPath: /tmp
         resources:
           requests:
-            memory: "1G"
+            memory: "4G"
             cpu: 1
         imagePullPolicy: Always
       volumes:
