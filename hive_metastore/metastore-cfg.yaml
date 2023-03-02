@@ -12,7 +12,7 @@ data:
             </property>
             <property>
                 <name>javax.jdo.option.ConnectionURL</name>
-                <value>jdbc:mysql://metastore-db:13306/metastore_db</value>
+                <value>jdbc:mysql://metastore-db:3306/metastore_db</value>
             </property>
             <property>
                 <name>javax.jdo.option.ConnectionDriverName</name>
