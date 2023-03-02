@@ -181,3 +181,7 @@ spec:
     command: ["tail", "-f", "/dev/null"]
     imagePullPolicy: Always
   restartPolicy: Always
+  hostAliases:
+  - ip: 10.190.24.157
+    hostnames:
+    - trino.local
