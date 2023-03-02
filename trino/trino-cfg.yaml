@@ -22,7 +22,7 @@ data:
     http-server.http.port=8080
     query.max-memory=4GB
     query.max-memory-per-node=1GB
-    query.max-total-memory-per-node=2GB
+    #query.max-total-memory-per-node=2GB
     memory.heap-headroom-per-node=1GB
     discovery-server.enabled=true
     discovery.uri=http://trino:8080
@@ -40,7 +40,7 @@ data:
     http-server.http.port=8080
     query.max-memory=4GB
     query.max-memory-per-node=1GB
-    query.max-total-memory-per-node=2GB
+    #query.max-total-memory-per-node=2GB
     memory.heap-headroom-per-node=1GB
     discovery-server.enabled=true
     discovery.uri=http://trino:8080
