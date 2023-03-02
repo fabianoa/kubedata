@@ -101,7 +101,7 @@ metadata:
   name: trino-worker
 spec:
   serviceName: trino-worker 
-  replicas: 6
+  replicas: 2
   selector:
     matchLabels:
       app: trino-worker
@@ -152,7 +152,7 @@ spec:
           mountPath: /tmp
         resources:
           requests:
-            memory: "2G"
+            memory: "4G"
             cpu: 1
         imagePullPolicy: Always
       volumes:
