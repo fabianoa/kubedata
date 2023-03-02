@@ -4,7 +4,7 @@ metadata:
   name: nifi-creds
 type: Opaque
 stringData:
-  password: 'nifi'
+  password: 'admindatalake'
 ---
 apiVersion: apps/v1
 kind: Deployment

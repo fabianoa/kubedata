@@ -29,6 +29,8 @@ data:
     discovery-server.enabled=true
     discovery.uri=http://trino:8080
     protocol.v1.alternate-header-name=Presto
+    http-server.https.enabled=true
+    http-server.process-forwarded=true
   config.properties.worker: |-
     coordinator=false
     http-server.http.port=8080
