@@ -93,7 +93,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: pgredash-pv-claim
 spec:
-  storageClassName: pure-block
+  storageClassName: nfs
   accessModes:
     - ReadWriteOnce
   resources:
