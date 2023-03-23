@@ -36,6 +36,8 @@ data:
   SPARK_MASTER: k8s://https://kubernetes.default.svc
   # default value of 'SPARK_HOME' property for spark interpreter.
   SPARK_HOME: /spark
+  HIVE_METASTORE: metastore:9083
+
 ---
 apiVersion: v1
 kind: ConfigMap
