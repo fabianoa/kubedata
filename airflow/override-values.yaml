@@ -5,7 +5,7 @@ dags:
     #branch: <branch-name>
     #subPath: ""
     #sshKeySecret: airflow-ssh-secret
-extraSecrets:
-  airflow-ssh-secret:
-    data: |
-      gitSshKey: '<base64-converted-ssh-private-key>'
+#extraSecrets:
+#  airflow-ssh-secret:
+#    data: |
+#      gitSshKey: '<base64-converted-ssh-private-key>'
