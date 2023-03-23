@@ -9,3 +9,8 @@ dags:
 #  airflow-ssh-secret:
 #    data: |
 #      gitSshKey: '<base64-converted-ssh-private-key>'
+env: 
+ - name: "http_proxy"
+   value: "http://10.190.24.159:3128"
+ - name: "https_proxy"
+   value: "http://10.190.24.159:3128"
