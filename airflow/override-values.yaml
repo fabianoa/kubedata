@@ -2,8 +2,8 @@ dags:
   gitSync:
     enabled: true
     repo: git@github.com:fabianoa/airflow-dags.git
-    #branch: <branch-name>
-    #subPath: ""
+    branch: main
+    subPath: "dags"
     #sshKeySecret: airflow-ssh-secret
 #extraSecrets:
 #  airflow-ssh-secret:
