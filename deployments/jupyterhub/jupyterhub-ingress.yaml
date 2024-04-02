@@ -1,0 +1,24 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jupyterhub-ui
+  annotations:
+    kubernetes.io/ingress.class: "nginx" # Altere conforme o controlador de Ingress em uso
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" # Altere para o nome do emissor de certificado apropriado
+spec:
+  tls:
+  - hosts:
+    - jupyterhub-bigdata.app.sema.df.gov.br # Altere para o domínio personalizado
+    secretName: jupyterhub-tls # Nome do segredo para armazenar o certificado TLS
+  rules:
+  - host: jupyterhub-bigdata.app.sema.df.gov.br # Altere para o domínio personalizado
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: proxy-public
+            port:
+              number: 80

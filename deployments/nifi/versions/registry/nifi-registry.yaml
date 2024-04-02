@@ -1,0 +1,230 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nifi-registry-secrets
+type: Opaque
+stringData:
+    NIFI_REGISTRY_SECURITY_KEYSTORE_PASSWORD: "mycompany"
+    NIFI_REGISTRY_SECURITY_TRUSTSTORE_PASSWORD: "sample-email@wso2.com"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nifi-keystore-secret
+type: Opaque
+data:
+  keystore.jks: |-
+    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
+  truststore.jks: |-
+    /u3+7QAAAAIAAAABAAAAAgAJbmlmaS1jZXJ0AAABh1zbmywABVguNTA5AAADZTCCA2EwggJJoAMC
+    AQICCgGHXNuaRAAAAAAwDQYJKoZIhvcNAQELBQAwIzENMAsGA1UECwwETklGSTESMBAGA1UEAwwJ
+    bG9jYWxob3N0MB4XDTIzMDQwNzE3NTUwOFoXDTI1MDcxMDE3NTUwOFowIzENMAsGA1UECwwETklG
+    STESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAki/X
+    6v9qJ1ogfQlrA6PjswWrbegee01+0sWnSEIMJx8nZEefShnVbFbA7Dls9/q2mSaOHjFGAXmhDwoG
+    weoQtKkddhKq8WIxFd2HGkxqT1CeDW9MVdKqVLMdf2Ez53eVASmKLtu5Pw3MxbEPolzsV2rw8oTq
+    r2D/g8ZbMvtmXFdc9nwUaTtW6uduuQAVBCQddy2vdjS8l9gykJqWhKKBnLMLb89532xTdFKzalFx
+    nXeWuWkOmgqzBnjTjEapKKCML5m39IxgiS2MQc1s4A9bGRQ7B0inhPDI+JjutdHSAm03uc5Akn24
+    Fk6Bi5e8ZT53xyQIUHSqu99OMeQGpoiPaQIDAQABo4GWMIGTMA4GA1UdDwEB/wQEAwIB/jAMBgNV
+    HRMEBTADAQH/MB0GA1UdDgQWBBS7vj4hBwo3m36i+7ldTrx2XoV0FTAfBgNVHSMEGDAWgBS7vj4h
+    Bwo3m36i+7ldTrx2XoV0FTAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwFAYDVR0RBA0w
+    C4IJbG9jYWxob3N0MA0GCSqGSIb3DQEBCwUAA4IBAQCJkz04eoMAAhw3nh/4laCumOn8oTj5w0+4
+    nuvk55BR07gsU+8EJFMI1TZV2+zdtSfJEEe/prytaO711MU8VZd3Q5I+s8b76oCEc6w/6Y/WKIFO
+    ZtqOKZ04kpL4T+KsOtRyswQ8Xr2L1oVx/iXVKfQr/MvvQpa73BML8iv8tXM+nyZha2axcgJsX6Nx
+    u5WEMBejCXdSrihsxE4Zoa/p/C7xQpgzMc9rjrjx0MYIw0BUWom3sTguPPWwtBUv8ZMh+4yCGkxU
+    a1mlnQ3+AWzrthVS+QwFazjuvJZ9XBj5Ro9teJ9RgVpDutsLo2vdbX+76lFNrI4b65Tbj9PD5Joo
+    YGIyC4CreIrwkwcb3BpRx7kOSVC/Uh0=
+--- 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nifi-registry-flow-storage-pvc
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+--- 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nifi-registry-db-pvc
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---      
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nifi-registry
+  labels:
+    app: nifi-registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nifi-registry
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nifi-registry
+    spec:
+      containers:
+      - name: nifi-registry
+        image: apache/nifi-registry:1.20.0
+        env:
+        - name: AUTH
+          value: "tls"
+        - name: KEYSTORE_PATH
+          value: "/opt/nifi-registry/certs/keystore.jks"
+        - name: KEYSTORE_TYPE
+          value: "JKS"
+        - name: KEYSTORE_PASSWORD
+          value: "7+55VSQP258Z0Yz6iRYMOkambkVvJH8aDadKpsbJ3nU"
+        - name: TRUSTSTORE_PATH
+          value: "/opt/nifi-registry/certs/truststore.jks"
+        - name: TRUSTSTORE_TYPE
+          value: "JKS"
+        - name: TRUSTSTORE_PASSWORD
+          value: "rbHx2dfTn/vhpzDQwrnJt0j0hPb7He29hfe68M2TuFs"
+        - name: NIFI_REGISTRY_WEB_HTTPS_HOST
+          value: "0.0.0.0"
+        - name: NIFI_REGISTRY_WEB_HTTPS_PORT
+          value: "18443"
+        - name: NIFI_REGISTRY_DB_DIR
+          value: "/opt/nifi-registry/nifi-registry-current/database"
+        - name: NIFI_REGISTRY_FLOW_PROVIDER
+          value: "file"
+        - name: NIFI_REGISTRY_FLOW_STORAGE_DIR
+          value: "/opt/nifi-registry/nifi-registry-current/flow_storage"
+        - name: INITIAL_ADMIN_IDENTITY
+          value: "CN=AdminUser, OU=nifi"
+        ports:
+        - containerPort: 18443
+        volumeMounts:
+        - name: nifi-regsitry-flow-storage
+          mountPath: /opt/nifi-registry/nifi-registry-current/flow_storage
+        - name: nifi-registry-db
+          mountPath: /opt/nifi-registry/nifi-registry-current/database
+        - name: nifi-keystore
+          mountPath: /opt/nifi-registry/certs/keystore.jks
+          subPath: keystore.jks
+        - name: nifi-keystore
+          mountPath: /opt/nifi-registry/certs/truststore.jks
+          subPath: truststore.jks
+      restartPolicy: Always
+      volumes:
+      - name: nifi-regsitry-flow-storage
+        persistentVolumeClaim:
+          claimName: nifi-registry-flow-storage-pvc
+      - name: nifi-registry-db
+        persistentVolumeClaim:
+          claimName: nifi-registry-db-pvc
+      - name: nifi-keystore
+        secret:
+          secretName: nifi-keystore-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nifi-reg-svc
+spec:
+  selector:
+    app: nifi-registry
+  ports:
+  - port: 18443
+    name: nifi-reg-ui
+    targetPort: 18443
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nifi-registry
+  namespace: nifi-bigdata
+  labels:
+    name: nifi-registry
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/upstream-vhost: "localhost:18443"
+    nginx.ingress.kubernetes.io/proxy-redirect-from: "https://localhost:18443"
+    nginx.ingress.kubernetes.io/proxy-redirect-to: "https://nifi-registry-bigdata.app.sema.df.gov.br"
+spec:
+  tls:
+  - hosts:
+    - nifi-registry-bigdata.app.sema.df.gov.br
+  rules:
+  - host: nifi-registry-bigdata.app.sema.df.gov.br
+    http:
+      paths:
+      - path: "/"
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: nifi-reg-svc
+            port:
+              number: 18443
+            

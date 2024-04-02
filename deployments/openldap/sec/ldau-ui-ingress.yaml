@@ -1,0 +1,27 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openldap-ui
+  namespace: kubedata-openldap
+  labels:
+    name: openldap-ui
+  annotations:
+    spec.ingressClassName: "nginx"    
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/upstream-vhost: "localhost:80"
+    nginx.ingress.kubernetes.io/proxy-redirect-from: "http://localhost:80"
+    nginx.ingress.kubernetes.io/proxy-redirect-to: "http://openldap-ui-kubedata.app"
+spec:
+  rules:
+  - host: openldap-ui-kubedata.app
+    http:
+      paths:
+      - path: "/"
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: ldap-ui-svc
+            port:
+              number: 80

@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-ui-svc
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: http
+    - name: https
+      protocol: TCP
+      port: 8443
+      targetPort: https
+    - name: http-management
+      protocol: TCP
+      port: 9990
+      targetPort: http-management
+  selector:
+    app.kubernetes.io/instance: keycloak
+    app.kubernetes.io/name: keycloak
+  type: LoadBalancer
+  sessionAffinity: None
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  internalTrafficPolicy: Cluster

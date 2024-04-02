@@ -1,0 +1,102 @@
+kind: ConfigMap 
+apiVersion: v1 
+metadata:
+  name: nifi-cfgfile
+data:
+  login-identity-providers.xml: |-
+    <loginIdentityProviders>
+      <provider>
+        <identifier>ldap-provider</identifier>
+        <class>org.apache.nifi.ldap.LdapProvider</class>
+        <property name="Authentication Strategy">ANONYMOUS</property>
+
+        <property name="TLS - Keystore"></property>
+        <property name="TLS - Keystore Password"></property>
+        <property name="TLS - Keystore Type"></property>
+        <property name="TLS - Truststore"></property>
+        <property name="TLS - Truststore Password"></property>
+        <property name="TLS - Truststore Type"></property>
+        <property name="TLS - Client Auth"></property>
+        <property name="TLS - Protocol"></property>
+        <property name="TLS - Shutdown Gracefully"></property>
+
+        <property name="Referral Strategy">FOLLOW</property>
+        <property name="Connect Timeout">10 secs</property>
+        <property name="Read Timeout">10 secs</property>
+
+        <property name="Url">ldap://openldap-svc.kubedata-openldap.svc.cluster.local:389</property>
+        <property name="User Search Base">ou=People,dc=poc,dc=br</property>
+        <property name="User Search Filter">uid={0}</property>
+        
+
+        <property name="Identity Strategy">USE_USERNAME</property>
+        <property name="Authentication Expiration">12 hours</property>
+      </provider>
+    </loginIdentityProviders>
+
+  authorizers.xml: |- 
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <authorizers>
+      <userGroupProvider>
+        <identifier>file-user-group-provider</identifier>
+        <class>org.apache.nifi.authorization.FileUserGroupProvider</class>
+        <property name="Users File">./conf/users.xml</property>
+        <property name="Legacy Authorized Users File"></property>
+        <property name="Initial User Identity 1"></property>
+      </userGroupProvider>
+
+      <userGroupProvider>
+        <identifier>ldap-user-group-provider</identifier>
+        <class>org.apache.nifi.ldap.tenants.LdapUserGroupProvider</class>
+        <property name="Authentication Strategy">ANONYMOUS</property>
+
+        <property name="Referral Strategy">FOLLOW</property>
+        <property name="Connect Timeout">10 secs</property>
+        <property name="Read Timeout">10 secs</property>
+
+        <property name="Url">ldap://openldap-svc.kubedata-openldap.svc.cluster.local:389</property>
+        <property name="Page Size"></property>
+        <property name="Sync Interval">2 mins</property>
+
+        <property name="User Search Base">ou=People,dc=poc,dc=br</property>
+        <property name="User Object Class">inetOrgPerson</property>
+        <property name="User Search Scope">ONE_LEVEL</property>
+        <property name="User Search Filter">(memberof=cn=NifiUsers,ou=Nifi,ou=Groups,dc=poc,dc=br)</property>
+        <property name="User Identity Attribute">cn</property>
+        <property name="User Group Name Attribute">memberof</property>
+        <property name="User Group Name Attribute - Referenced Group Attribute"></property>
+        
+
+
+        <property name="Group Search Base">ou=Nifi,ou=Groups,dc=poc,dc=br</property>
+        <property name="Group Object Class">groupOfNames</property>
+        <property name="Group Search Scope">ONE_LEVEL</property>
+        <property name="Group Search Filter"></property>
+        <property name="Group Name Attribute">cn</property>
+        <property name="Group Member Attribute">member</property>
+        <property name="Group Member Attribute - Referenced User Attribute"></property>
+      </userGroupProvider>
+
+      <userGroupProvider>
+        <identifier>composite-configurable-user-group-provider</identifier>
+        <class>org.apache.nifi.authorization.CompositeConfigurableUserGroupProvider</class>
+        <property name="Configurable User Group Provider">file-user-group-provider</property>
+        <property name="User Group Provider 1">ldap-user-group-provider</property>
+      </userGroupProvider>
+
+      <accessPolicyProvider>
+        <identifier>file-access-policy-provider</identifier>
+        <class>org.apache.nifi.authorization.FileAccessPolicyProvider</class>
+        <property name="User Group Provider">composite-configurable-user-group-provider</property>
+        <property name="Authorizations File">./conf/authorizations.xml</property>
+        <property name="Initial Admin Identity">nifi.admin</property>
+        <property name="Legacy Authorized Users File"></property>
+        <property name="Node Identity 1"></property>
+    </accessPolicyProvider>
+
+      <authorizer>
+        <identifier>managed-authorizer</identifier>
+        <class>org.apache.nifi.authorization.StandardManagedAuthorizer</class>
+        <property name="Access Policy Provider">file-access-policy-provider</property>
+      </authorizer>
+    </authorizers>

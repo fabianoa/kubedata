@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ldap-ui
+  labels:
+    app: ldap-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ldap-ui
+  template:
+    metadata:
+      labels:
+        app: ldap-ui
+    spec:
+      enableServiceLinks: false
+      containers:
+        - name: ldap-ui
+          image: osixia/phpldapadmin:0.9.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: PHPLDAPADMIN_LDAP_HOSTS
+              value: ldap://openldap-svc:389
+            - name: PHPLDAPADMIN_HTTPS
+              value: "false"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ldap-ui-svc
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    app: ldap-ui

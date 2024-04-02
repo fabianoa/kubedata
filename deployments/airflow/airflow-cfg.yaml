@@ -1,0 +1,161 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: airflow-config
+data:
+  # Adicione o arquivo airflow.cfg ao ConfigMap
+  airflow.cfg: |
+    [core]
+    dags_folder = /opt/airflow/dags
+    plugins_folder = /opt/airflow/plugins
+    sql_alchemy_conn = postgresql+psycopg2://airflow:airflow00!@postgres-airflow-svc:5432/airflow
+    min_file_process_interval = 0
+    dag_dir_list_interval = 60
+
+    [webserver]
+    web_server_host = 0.0.0.0
+    web_server_port = 8080
+    secret_key = mysecretkey
+
+
+    [kubernetes]
+    executor = KubernetesExecutor
+    worker_container_repository = apache/airflow
+    worker_container_tag = 2.8.4
+    worker_container_image_pull_policy = IfNotPresent
+    dags_volume_claim = airflow-dags-pvc
+    #dags_volume_subpath = dags
+    delete_worker_pods = True
+    in_cluster = True
+    worker_service_account_name = airflow-worker
+    namespace = kubedata-airflow
+
+    #[git-sync]
+    #repo = https://github.com/fabianoa/airflow-dags.git
+    #branch = master
+    # subPath = dags
+    #rev = HEAD
+    #depth = 1
+    #mount_path = /opt/airflow/dags
+  webserver_config.py: |
+    #
+    # Licensed to the Apache Software Foundation (ASF) under one
+    # or more contributor license agreements.  See the NOTICE file
+    # distributed with this work for additional information
+    # regarding copyright ownership.  The ASF licenses this file
+    # to you under the Apache License, Version 2.0 (the
+    # "License"); you may not use this file except in compliance
+    # with the License.  You may obtain a copy of the License at
+    #
+    #   http://www.apache.org/licenses/LICENSE-2.0
+    #
+    # Unless required by applicable law or agreed to in writing,
+    # software distributed under the License is distributed on an
+    # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    # KIND, either express or implied.  See the License for the
+    # specific language governing permissions and limitations
+    # under the License.
+    """Default configuration for the Airflow webserver"""
+    import os
+
+    from flask_appbuilder.security.manager import AUTH_LDAP
+
+    AUTH_TYPE = AUTH_LDAP
+    AUTH_LDAP_SERVER = "ldap://openldap-svc.kubedata-openldap.svc.cluster.local:389"
+    AUTH_LDAP_USE_TLS = False
+
+    # searches
+    AUTH_LDAP_SEARCH = "dc=poc,dc=br"  # the LDAP search base
+    AUTH_LDAP_UID_FIELD = "cn"  # the username field
+
+    # For a typical OpenLDAP setup (where LDAP searches require a special account):
+    AUTH_LDAP_BIND_USER = "cn=usersync,ou=People,dc=poc,dc=br"  # the special bind username for search
+    AUTH_LDAP_BIND_PASSWORD = "usersync"  # the special bind password for search
+
+    # registration configs
+    AUTH_USER_REGISTRATION = True  # allow users who are not already in the FAB DB
+    AUTH_USER_REGISTRATION_ROLE = "Public"  # this role will be given in addition to any AUTH_ROLES_MAPPING
+    AUTH_LDAP_FIRSTNAME_FIELD = "cn"
+    AUTH_LDAP_LASTNAME_FIELD = "sn"
+    AUTH_LDAP_EMAIL_FIELD = "mail"  # if null in LDAP, email is set to: "{username}@email.notfound"
+
+    # a mapping from LDAP DN to a list of FAB roles
+    AUTH_ROLES_MAPPING = {
+        "cn=AirflowViewer,ou=Airflow,ou=Groups,dc=poc,dc=br": ["Viewer"],
+        "cn=AirflowUser,ou=Airflow,ou=Groups,dc=poc,dc=br": ["User"],
+        "cn=AirflowOp,ou=Airflow,ou=Groups,dc=poc,dc=br": ["Op"],
+        "cn=AirflowAdmin,ou=Airflow,ou=Groups,dc=poc,dc=br": ["Admin"],
+    }
+
+    # the LDAP user attribute which has their role DNs
+    AUTH_LDAP_GROUP_FIELD = "memberOf"
+
+    # if we should replace ALL the user's roles each login, or only on registration
+    AUTH_ROLES_SYNC_AT_LOGIN = True
+
+    # force users to re-auth after 30min of inactivity (to keep roles in sync)
+    PERMANENT_SESSION_LIFETIME = 1800 
+  trino_operator.py: |  
+    from airflow.models.baseoperator import BaseOperator
+    from airflow.utils.decorators import apply_defaults
+    from airflow.providers.trino.hooks.trino import TrinoHook
+    import logging
+    from typing import Sequence, Callable, Optional
+
+    def handler(cur):
+        cur.fetchall()
+
+    class TrinoCustomHook(TrinoHook):
+
+        def run(
+            self,
+            sql,
+            autocommit: bool = False,
+            parameters: Optional[dict] = None,
+            handler: Optional[Callable] = None,
+        ) -> None:
+            """:sphinx-autoapi-skip:"""
+
+            return super(TrinoHook, self).run(
+                sql=sql, autocommit=autocommit, parameters=parameters, handler=handler
+            )
+
+    class TrinoOperator(BaseOperator):
+
+        template_fields: Sequence[str] = ('sql',)
+
+        @apply_defaults
+        def __init__(self, trino_conn_id: str, sql, parameters=None, **kwargs) -> None:
+            super().__init__(**kwargs)
+            self.trino_conn_id = trino_conn_id
+            self.sql = sql
+            self.parameters = parameters
+
+        def execute(self, context):
+            task_instance = context['task']
+
+            logging.info('Creating Trino connection')
+            hook = TrinoCustomHook(trino_conn_id=self.trino_conn_id)
+
+            sql_statements = self.sql
+
+            if isinstance(sql_statements, str):
+                sql = list(filter(None,sql_statements.strip().split(';')))
+
+                if len(sql) == 1:
+                    logging.info('Executing single sql statement')
+                    sql = sql[0]
+                    return hook.get_first(sql, parameters=self.parameters)
+
+                if len(sql) > 1:
+                    logging.info('Executing multiple sql statements')
+                    return hook.run(sql, autocommit=False, parameters=self.parameters, handler=handler)
+
+            if isinstance(sql_statements, list):
+                sql = []
+                for sql_statement in sql_statements:
+                    sql.extend(list(filter(None,sql_statement.strip().split(';'))))
+
+                logging.info('Executing multiple sql statements')
+                return hook.run(sql, autocommit=False, parameters=self.parameters, handler=handler)

@@ -1,0 +1,19 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: airflow
+  labels:
+    name: airflow
+spec:
+  rules:
+  - host: airflow-bigdata.app.sema.df.gov.br
+    http:
+      paths:
+      - path: "/"
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: airflow-svc
+            port:
+              number: 8080

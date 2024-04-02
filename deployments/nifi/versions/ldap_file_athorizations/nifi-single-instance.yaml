@@ -1,0 +1,192 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nifi-creds
+type: Opaque
+stringData:
+  password: 'admindatalake'
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nifi-flow-pvc
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nifi-content-pvc
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nifi-flowfile-pvc
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nifi-provenance-pvc
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nifi-transient-zone-pvc
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+---      
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nifi
+spec:
+  selector:
+    matchLabels:
+      app: nifi
+  template:
+    metadata:
+      labels:
+        app: nifi
+    spec:
+      # host adicionado para que pudesse usar ingress para fazer autenticação no trino
+      hostAliases:
+        -  ip: "10.233.147.13"
+           hostnames:
+            - "trino-bigdata.app.sema.df.gov.br"
+      containers:
+      - name: nifi
+        image: apache/nifi:1.20.0
+        volumeMounts:
+        - name: flow-xml
+          mountPath: /opt/nifi/nifi-current/flow-repository
+        - name: nifi-content-repository
+          mountPath: /opt/nifi/nifi-current/content_repository
+        - name: nifi-flowfile-repository
+          mountPath: /opt/nifi/nifi-current/flowfile_repository
+        - name: nifi-provenance-repository
+          mountPath: /opt/nifi/nifi-current/provenance_repository
+        - name: nifi-zona-transicao
+          mountPath: /dados/zona_transicao
+        - name: ldap-config
+          mountPath: /opt/nifi/nifi-current/conf/login-identity-providers.xml
+          subPath: login-identity-providers.xml
+        - name: ldap-config
+          mountPath: /opt/nifi/nifi-current/conf/authorizers.xml
+          subPath: authorizers.xml
+        command: ['/bin/bash', '-c']
+        args:
+        - set -x;
+          sed -i -- "s~nifi.flow.configuration.file=.*~nifi.flow.configuration.file=./flow-repository/flow.xml.gz~" conf/nifi.properties;
+          sed -i -- "s~nifi.security.user.login.identity.provider.*~nifi.security.user.login.identity.provider=ldap-provider~" conf/nifi.properties;
+          sed -i -- "s~nifi.security.user.authorizer.*~nifi.security.user.authorizer=managed-authorizer~" conf/nifi.properties;
+          sed -i -- "s~nifi.security.identity.mapping.value.dn.*~nifi.security.identity.mapping.value.dn=$1~" conf/nifi.properties;
+          curl https://jdbc.postgresql.org/download/postgresql-42.6.0.jar  -o  /opt/nifi/nifi-current/lib/postgresql-42.6.0.jar;
+          curl https://repo1.maven.org/maven2/io/trino/trino-jdbc/413/trino-jdbc-413.jar -o  /opt/nifi/nifi-current/lib/trino-jdbc-413.jar;
+          ${NIFI_BASE_DIR}/scripts/start.sh
+        ports:
+        - containerPort: 8443
+        env:
+          - name: TZ
+            value: America/Sao_Paulo
+          - name: NIFI_SENSITIVE_PROPS_KEY
+            value: "a67af951e0204d8df9945ca71fc19be6" 
+          #- name: SINGLE_USER_CREDENTIALS_USERNAME
+          #  value: "admin"
+          #- name: SINGLE_USER_CREDENTIALS_PASSWORD
+          #  valueFrom:
+          #    secretKeyRef:
+          #      name: nifi-creds
+          #      key: password
+      restartPolicy: Always
+      volumes:
+        - name: nifi-content-repository
+          persistentVolumeClaim:
+            claimName: nifi-content-pvc
+        - name: nifi-flowfile-repository
+          persistentVolumeClaim:
+            claimName: nifi-flowfile-pvc
+        - name: nifi-provenance-repository
+          persistentVolumeClaim:
+            claimName: nifi-provenance-pvc
+        - name: nifi-zona-transicao
+          persistentVolumeClaim:
+            claimName: nifi-transient-zone-pvc
+        - name: flow-xml
+          persistentVolumeClaim:
+            claimName: nifi-flow-pvc
+        - name: ldap-config
+          configMap:
+            name: nifi-cfgfile
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nifi-svc
+spec:
+  selector:
+    app: nifi
+  ports:
+  - port: 8443
+    name: nifi-ui
+    targetPort: 8443
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nifi
+  namespace: nifi-bigdata
+  labels:
+    name: nifi
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/upstream-vhost: "localhost:8443"
+    nginx.ingress.kubernetes.io/proxy-redirect-from: "https://localhost:8443/nifi"
+    nginx.ingress.kubernetes.io/proxy-redirect-to: "https://nifi-bigdata.app.sema.df.gov.br"
+spec:
+  tls:
+  - hosts:
+    - nifi-bigdata.app.sema.df.gov.br
+  rules:
+  - host: nifi-bigdata.app.sema.df.gov.br
+    http:
+      paths:
+      - path: "/"
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: nifi-svc
+            port:
+              name: nifi-ui

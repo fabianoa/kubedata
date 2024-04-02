@@ -1,0 +1,80 @@
+superset:
+  ## Configurações adicionais para o container do Superset
+  extraEnv: |
+    # Adicionar as variáveis de ambiente adicionais aqui
+    export PYTHONPATH=/app/superset/:$PYTHONPATH
+    export SUPERSET_ENV=production
+  ## Configurações do banco de dados
+  database:
+    ## Tipo de banco de dados
+    type: postgres
+    ## Nome do banco de dados
+    name: superset
+    ## Usuário do banco de dados
+    user: superset
+    ## Senha do banco de dados
+    password: sua_senha_aqui
+    ## Endereço do servidor do banco de dados
+    host: superset-db
+    ## Porta do servidor do banco de dados
+    port: 5432
+
+  ## Configurações adicionais para o Kubernetes
+  kubernetes:
+    ## Configurações adicionais para o volume do Superset
+    extraVolumeMounts: |
+      # Adicionar os volumes adicionais aqui
+      - name: superset
+        mountPath: /app/superset/
+        subPath: superset
+
+    ## Configurações adicionais para o volume do Superset
+    extraVolumes: |
+      # Adicionar os volumes adicionais aqui
+      - name: superset
+        emptyDir: {}
+
+configOverrides: 
+    enable_ldap: |
+      from flask_appbuilder.security.manager import AUTH_LDAP
+      
+      AUTH_TYPE = AUTH_LDAP
+      AUTH_ROLE_ADMIN ='Admin'
+      AUTH_LDAP_USE_TLS = False
+      AUTH_USER_REGISTRATION_ROLE= "Public"
+      #AUTH_LDAP_FIRSTNAME_FIELD = "givenName"
+      AUTH_LDAP_LASTNAME_FIELD = "sn"
+      #AUTH_LDAP_EMAIL_FIELD = "mail"  
+      AUTH_USER_REGISTRATION = True
+
+      AUTH_LDAP_SERVER = "ldap://openldap-svc.kubedata-openldap.svc.cluster.local:389"
+      AUTH_LDAP_SEARCH = "dc=poc,dc=br"
+      AUTH_LDAP_USERNAME_FORMAT = "cn=%s,ou=People,dc=poc,dc=br"
+      AUTH_LDAP_UID_FIELD = "cn"
+      AUTH_ROLES_MAPPING = {
+          "cn=SupersetAdmin,ou=Superset,ou=Groups,dc=poc,dc=br": ["Admin"],
+          "cn=SupersetAlpha,ou=Superset,ou=Groups,dc=poc,dc=br": ["Alpha"],
+          "cn=SupersetSQLLab,ou=Superset,ou=Groups,dc=poc,dc=br": ["sql_lab"],
+          "cn=SupersetGamma,ou=Superset,ou=Groups,dc=poc,dc=br": ["Gamma"],
+      }
+      AUTH_ROLES_SYNC_AT_LOGIN = True
+
+      AUTH_LDAP_BIND_USER = "cn=usersync,ou=People,dc=poc,dc=br"
+      AUTH_LDAP_BIND_PASSWORD = "usersync"
+      
+      AUTH_ROLE_PUBLIC = 'Public'
+      PUBLIC_ROLE_LIKE = 'Gamma'
+      
+      SECRET_KEY = 'wifbeiaufkdb29475jfdbskfrh493hdb'
+
+      # Debug option
+      DEBUG = True
+      LOG_LEVEL = 'DEBUG'
+
+bootstrapScript: |
+  #!/bin/bash
+  echo "10.233.147.13   trino-bigdata.app.sema.df.gov.br" >> /etc/hosts && \
+  pip install trino && \       
+  apt-get update -y && apt-get install -y python3-dev libldap2-dev libsasl2-dev ldap-utils tox lcov valgrind && \  
+  pip install python-ldap && \ 
+  if [ ! -f ~/bootstrap ]; then echo "Running Superset with uid {{ .Values.runAsUser }}" > ~/bootstrap; fi

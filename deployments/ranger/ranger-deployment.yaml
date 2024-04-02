@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: regcred
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: ewoJImF1dGhzIjogewoJCSJkb2NrZXIuYXBwLnNlbWEuZGYuZ292LmJyIjogewoJCQkiYXV0aCI6ICJZV1J0YVc0NlUybHpaR2xoWm1GelpUST0iCgkJfSwKCQkiaHR0cHM6Ly9pbmRleC5kb2NrZXIuaW8vdjEvIjogewoJCQkiYXV0aCI6ICJabUZpYVdGdWIyRTZNamt3TVRrMyIKCQl9Cgl9Cn0K
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ranger-svc
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 6080
+      name: ranger-ui
+      targetPort: 6080
+  selector:
+    app: ranger
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ranger
+spec:
+  selector:
+    matchLabels:
+      app: ranger
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ranger
+    spec:
+      imagePullSecrets:
+          - name: regcred
+      # host adicionado para que pudesse usar ingress para fazer autenticação no trino
+      containers:
+      - name: ranger
+        image: "fabianoa/trino-ranger:v3.1"
+        command: ["sh", "-c", "/root/entrypoint.sh"]
+        envFrom: 
+            - configMapRef: 
+                name: postgres-config
+            - secretRef:
+                name: postgres-secret
+        ports:
+        - containerPort: 6080
+          name: ranger-ui
+        volumeMounts:
+        - name: ranger-cfg-vol
+          mountPath: /root/ranger-admin/install.properties
+          subPath: install.properties
+        resources:
+          requests:
+            memory: "2G"
+            cpu: 1
+      volumes:
+        - name: ranger-cfg-vol
+          configMap:
+            name: ranger-cfg
+---
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ranger-usersync
+spec:
+  selector:
+    matchLabels:
+      app: ranger-usersync
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ranger-usersync
+    spec:
+      imagePullSecrets:
+          - name: regcred
+      # host adicionado para que pudesse usar ingress para fazer autenticação no trino
+      containers:
+      - name: ranger-usersync
+        image: "fabianoa/ranger-usersync:2.1.0"
+        imagePullPolicy: Always
+        command: ["sh", "-c", "./bootstrap.sh"]
+        #command: ["tail”", "-f", "/dev/null"]
+        volumeMounts:
+        - name: ranger-cfg-vol
+          mountPath: /install.properties
+          subPath: usersync_install.properties
+      volumes:
+        - name: ranger-cfg-vol
+          configMap:
+            name: ranger-cfg

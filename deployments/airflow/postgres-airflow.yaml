@@ -1,0 +1,76 @@
+apiVersion: v1 
+kind: ConfigMap 
+metadata: 
+  name: postgres-airflow-config 
+  labels: 
+    app: postgres 
+data: 
+  POSTGRES_DB: airflow 
+  POSTGRES_USER: airflow
+  PGDATA: /var/lib/postgresql/data/pgdata
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-airflow-secret
+type: Opaque
+stringData:
+  POSTGRES_PASSWORD: 'airflow00!'
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-airflow-pv-claim
+spec:
+  storageClassName: default
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-airflow-svc
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: postgres
+---
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: postgres-airflow-deployment 
+spec: 
+  replicas: 1 
+  selector: 
+    matchLabels: 
+      app: postgres 
+  template: 
+    metadata: 
+      labels: 
+        app: postgres 
+    spec:
+      containers: 
+        - name: postgres 
+          image: postgres:13
+          imagePullPolicy: "IfNotPresent" 
+          ports: 
+            - containerPort: 5432 
+          envFrom: 
+            - configMapRef: 
+                name: postgres-airflow-config 
+            - secretRef:
+                name: postgres-airflow-secret
+          volumeMounts: 
+            - mountPath: /var/lib/postgresql/data
+              name: postgredb
+          securityContext:
+            runAsUser: 0
+      volumes: 
+        - name: postgredb 
+          persistentVolumeClaim: 
+            claimName: postgres-airflow-pv-claim

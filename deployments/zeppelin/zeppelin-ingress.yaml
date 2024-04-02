@@ -1,0 +1,31 @@
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zeppelin-ui
+  namespace: zeppelin-bigdata
+  labels:
+    name: zeppelin-ui
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/upstream-vhost: "localhost:80"
+    nginx.ingress.kubernetes.io/proxy-redirect-from: "http://localhost:80"
+    nginx.ingress.kubernetes.io/proxy-redirect-to: "https://zeppelin-bigdata.app.sema.df.gov.br"
+spec:
+  tls:
+  - hosts:
+    - zeppelin-bigdata.app.sema.df.gov.br
+  rules:
+  - host: zeppelin-bigdata.app.sema.df.gov.br
+    http:
+      paths:
+      - path: "/"
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: zeppelin-server
+            port:
+              number: 80

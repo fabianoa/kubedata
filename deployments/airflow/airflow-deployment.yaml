@@ -1,0 +1,177 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: airflow-secrets
+type: Opaque
+data:
+  # Codifique as credenciais do repositório Git em Base64
+  git_user: Z2l0OnBhc3N3b3Jk
+  git_password: cGFzc3dvcmQ=
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: airflow-svc
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: airflow
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: airflow-dags-pvc
+spec:
+  storageClassName: azurefile
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: log-reader-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: log-reader-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: log-reader-role
+subjects:
+- kind: ServiceAccount
+  name: airflow-worker
+  namespace: kubedata-airflow
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pod-creator-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["create", "get", "list", "watch", "delete","patch"]
+- apiGroups: [""]
+  resources: ["pods/log", "configmaps", "secrets"]
+  verbs: ["get", "watch", "list"]
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create", "get"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pod-creator-rolebinding
+subjects:
+- kind: ServiceAccount
+  name: airflow-worker
+  namespace: kubedata-airflow
+roleRef:
+  kind: Role
+  name: pod-creator-role
+  apiGroup: rbac.authorization.k8s.io
+---  
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: airflow-worker
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+  template:
+    metadata:
+      labels:
+        app: airflow
+    spec:
+      serviceAccountName: airflow-worker
+      containers:
+      - name: git-sync
+        image: "k8s.gcr.io/git-sync/git-sync:v3.3.0"
+        env:
+            - name: GIT_SYNC_BRANCH
+              value: "main"
+            - name: GIT_SYNC_REPO
+              value: "https://github.com/fabianoa/airflow-dags.git"
+            - name: GIT_KNOWN_HOSTS
+              value: "false"
+            - name: GIT_SYNC_ROOT
+              value: /opt/airflow
+            - name:  GIT_SYNC_DEST
+              value: "dags"
+        volumeMounts:
+           - name: airflow-dags
+             mountPath: /opt
+        securityContext:
+            runAsUser: 0
+      - name: airflow-webserver
+        image: apache/airflow:2.8.1
+        command: ["bash", "-c"]
+        args:
+          - pip install apache-airflow-providers-trino;
+            rm -r -f dags;
+            ln -s  /sync-dags/airflow/dags dags;
+            airflow db init;
+            airflow users create --username admin --password admin --firstname admin --lastname admin --role Admin --email admin@example.com;
+            airflow webserver
+        volumeMounts:
+        - name: airflow-config
+          mountPath: /opt/airflow/airflow.cfg
+          subPath: airflow.cfg
+        - name: airflow-config
+          mountPath: /opt/airflow/webserver_config.py
+          subPath: webserver_config.py
+        - name: airflow-config
+          mountPath: /opt/airflow/plugins/trino_operator.py
+          subPath: trino_operator.py
+        - name: airflow-dags
+          mountPath: /sync-dags
+      - name: airflow-scheduler
+        image: apache/airflow:2.8.1
+        command: ["bash", "-c"]
+        args:
+          - pip install apache-airflow-providers-trino;
+            rm -r -f dags;
+            ln -s  /sync-dags/airflow/dags dags;
+            airflow scheduler;
+        volumeMounts:
+        - name: airflow-config
+          mountPath: /opt/airflow/airflow.cfg
+          subPath: airflow.cfg
+          readOnly: true
+        - name: airflow-config
+          mountPath: /opt/airflow/plugins/trino_operator.py
+          subPath: trino_operator.py
+        - name: airflow-dags
+          mountPath: /sync-dags
+      volumes:
+      - name: airflow-config
+        configMap:
+            name: airflow-config
+      - name: airflow-dags
+        #emptyDir: {}
+        persistentVolumeClaim:
+            claimName: airflow-dags-pvc

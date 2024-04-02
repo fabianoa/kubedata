@@ -1,0 +1,308 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ldap-creds
+type: Opaque
+stringData:
+  password: 'admin'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openldap-deployment
+  labels:
+    app: ldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ldap
+  template:
+    metadata:
+      labels:
+        app: ldap
+    spec:
+      containers:
+      - name: openldap
+        image: bitnami/openldap:latest
+        ports:
+        - containerPort: 389
+          name: ldap
+        env:
+        # https://hub.docker.com/r/bitnami/openldap/
+        - name: LDAP_ROOT
+          value: "dc=poc,dc=br"
+        - name: LDAP_ADMIN_USERNAME
+          value: "admin"
+        - name: LDAP_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ldap-creds
+              key: password
+        - name: LDAP_REPLICATION_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ldap-creds
+              key: password
+        - name: LDAP_PORT_NUMBER
+          value: "389"
+        volumeMounts:
+        - name: ldap-data
+          mountPath: /bitnami/openldap
+        - name: openldap-config
+          mountPath: /bitnami/openldap/memberof.ldif
+          subPath: memberof.ldif
+        - name: openldap-config
+          mountPath: /bitnami/openldap/inittree.ldif
+          subPath: inittree.ldif
+        - name: openldap-config
+          mountPath: /bitnami/openldap/nifi.ldif
+          subPath: nifi.ldif
+        - name: openldap-config
+          mountPath: /bitnami/openldap/airflow.ldif
+          subPath: airflow.ldif
+        - name: openldap-config
+          mountPath: /bitnami/openldap/trino.ldif
+          subPath: trino.ldif
+        - name: openldap-config
+          mountPath: /bitnami/openldap/ranger.ldif
+          subPath: ranger.ldif
+        - name: openldap-config
+          mountPath: /bitnami/openldap/superset.ldif
+          subPath: superset.ldif
+        - name: openldap-config
+          mountPath: /bitnami/openldap/zeppelin.ldif
+          subPath: zeppelin.ldif
+        - name: openldap-config
+          mountPath: /bitnami/openldap/jupyterhub.ldif
+          subPath: jupyterhub.ldif
+      volumes:
+      - name: ldap-data
+        persistentVolumeClaim:
+          claimName: ldap-data-pvc
+      - name: openldap-config
+        configMap:
+           name: openldap-cfg
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ldap-data-pvc
+spec:
+  storageClassName: azurefile
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openldap-svc
+  labels:
+    app: ldap
+spec:
+  type: ClusterIP
+  selector:
+    app: ldap
+  ports:
+    - protocol: TCP
+      port: 389
+      targetPort: 389
+      name: ldap
+---
+kind: ConfigMap 
+apiVersion: v1 
+metadata:
+  name: openldap-cfg
+data:
+  memberof.ldif: |-    
+    dn: cn=module,cn=config
+    objectClass: olcModuleList
+    cn: module
+    olcModuleLoad: memberof
+    olcModulePath: /opt/bitnami/openldap/lib/openldap
+
+    dn: olcOverlay=memberof,olcDatabase={2}mdb,cn=config
+    objectClass: olcConfig
+    objectClass: olcMemberOf
+    objectClass: olcOverlayConfig
+    objectClass: top
+    olcOverlay: memberof
+
+  inittree.ldif: |-
+    dn: ou=Groups,dc=poc,dc=br
+    objectclass: organizationalUnit
+    ou: Groups
+
+    dn: ou=People,dc=poc,dc=br
+    objectclass: organizationalUnit
+    ou: People
+
+    dn: cn=usersync,ou=People,dc=poc,dc=br
+    objectclass: inetOrgPerson
+    sn: UserSync
+    cn: usersync
+    uid: usersync
+    userPassword: usersync
+
+  nifi.ldif: |-    
+    dn: ou=Nifi,ou=Groups,dc=poc,dc=br
+    objectclass: organizationalUnit
+    ou: Nifi
+
+    dn: cn=nifi.admin,ou=People,dc=poc,dc=br
+    objectclass: inetOrgPerson
+    sn: Admin
+    cn: nifi.admin
+    uid: nifi.admin
+    userPassword: changeit
+
+    dn: cn=NifiAdmins,ou=Nifi,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: NifiAdmins
+    member:cn=nifi.admin,ou=People,dc=poc,dc=br
+
+    dn: cn=NifiDevs,ou=Nifi,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: NifiDevs
+    member:cn=nifi.admin,ou=People,dc=poc,dc=br
+
+    dn: cn=NifiUsers,ou=Nifi,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: NifiUsers
+    member:cn=nifi.admin,ou=People,dc=poc,dc=br
+  
+  trino.ldif: |-    
+    dn: ou=Trino,ou=Groups,dc=poc,dc=br
+    objectclass: organizationalUnit
+    ou: Trino
+
+    dn: cn=trino.admin,ou=People,dc=poc,dc=br
+    objectclass: inetOrgPerson
+    sn: Admin
+    cn: trino.admin
+    uid: trino.admin
+    userPassword: changeit
+
+    dn: cn=TrinoUsers,ou=Trino,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: TrinoUsers
+    member:cn=trino.admin,ou=People,dc=poc,dc=br
+
+  ranger.ldif: |-  
+    dn: ou=Ranger,ou=Groups,dc=poc,dc=br
+    objectclass: organizationalUnit
+    ou: Ranger
+
+    dn: cn=ranger.admin,ou=People,dc=poc,dc=br
+    objectclass: inetOrgPerson
+    sn: Admin
+    cn: ranger.admin
+    uid: ranger.admin
+    userPassword: changeit
+
+    dn: cn=RangerAdmin,ou=Ranger,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: RangerAdmin
+    member:cn=ranger.admin,ou=People,dc=poc,dc=br
+  superset.ldif: |-  
+    dn: ou=Superset,ou=Groups,dc=poc,dc=br
+    objectclass: organizationalUnit
+    ou: Superset
+
+    dn: cn=superset.admin,ou=People,dc=poc,dc=br
+    objectclass: inetOrgPerson
+    sn: Admin
+    cn: superset.admin
+    uid: superset.admin
+    userPassword: changeit
+
+    dn: cn=SupersetAdmin,ou=Superset,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: SupersetAdmin
+    member:cn=superset.admin,ou=People,dc=poc,dc=br
+
+    dn: cn=SupersetAlpha,ou=Superset,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: SupersetAlpha
+    member:cn=superset.admin,ou=People,dc=poc,dc=br
+
+    dn: cn=SupersetGamma,ou=Superset,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: SupersetGamma
+    member:cn=superset.admin,ou=People,dc=poc,dc=br
+
+    dn: cn=SupersetSQLLab,ou=Superset,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: SupersetSQLLab
+    member:cn=superset.admin,ou=People,dc=poc,dc=br
+  zeppelin.ldif: |-  
+    dn: ou=Zeppelin,ou=Groups,dc=poc,dc=br
+    objectclass: organizationalUnit
+    ou: Zeppelin
+
+    dn: cn=zeppelin.admin,ou=People,dc=poc,dc=br
+    objectclass: inetOrgPerson
+    sn: Admin
+    cn: zeppelin.admin
+    uid: zeppelin.admin
+    userPassword: changeit
+
+    dn: cn=ZeppelinAdmin,ou=Zeppelin,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: ZeppelinAdmin
+    member:cn=zeppelin.admin,ou=People,dc=poc,dc=br
+
+    dn: cn=ZeppelinUsers,ou=Zeppelin,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: ZeppelinUsers
+    member:cn=zeppelin.admin,ou=People,dc=poc,dc=br
+  airflow.ldif: |-  
+    dn: ou=Airflow,ou=Groups,dc=poc,dc=br
+    objectclass: organizationalUnit
+    ou: Airflow
+
+    dn: cn=airflow.admin,ou=People,dc=poc,dc=br
+    objectclass: inetOrgPerson
+    sn: Admin
+    cn: airflow.admin
+    uid: airflow.admin
+    userPassword: changeit
+
+    dn: cn=AirflowAdmin,ou=Airflow,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: AirflowAdmin
+    member:cn=airflow.admin,ou=People,dc=poc,dc=br
+
+    dn: cn=AirflowUser,ou=Airflow,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: AirflowUser
+    member:cn=airflow.admin,ou=People,dc=poc,dc=br
+
+    dn: cn=AirflowViewer,ou=Airflow,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: AirflowViewer
+    member:cn=airflow.admin,ou=People,dc=poc,dc=br
+
+    dn: cn=AirflowOp,ou=Airflow,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: AirflowOp
+    member:cn=airflow.admin,ou=People,dc=poc,dc=br
+  jupyterhub.ldif: |-  
+    dn: ou=JupyterHub,ou=Groups,dc=poc,dc=br
+    objectclass: organizationalUnit
+    ou: JupyterHub
+
+    dn: cn=usuario.teste,ou=People,dc=poc,dc=br
+    objectclass: inetOrgPerson
+    sn: Teste
+    cn: usuario.teste
+    uid: usuario.teste
+    userPassword: changeit
+
+    dn: cn=Users,ou=JupyterHub,ou=Groups,dc=poc,dc=br
+    objectclass: groupOfNames
+    cn: Users
+    member:cn=usuario.teste,ou=People,dc=poc,dc=br

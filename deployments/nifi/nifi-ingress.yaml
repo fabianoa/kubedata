@@ -1,0 +1,27 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nifi
+  namespace: nifi-bigdata
+  labels:
+    name: nifi
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/upstream-vhost: "localhost:8443"
+    nginx.ingress.kubernetes.io/proxy-redirect-from: "https://localhost:8443/nifi"
+    nginx.ingress.kubernetes.io/proxy-redirect-to: "http://nifi-bigdata.app.sema.df.gov.br"
+spec:
+  rules:
+  - host: nifi-bigdata.app.sema.df.gov.br
+    http:
+      paths:
+      - path: "/"
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: nifi-svc
+            port:
+              name: nifi-ui

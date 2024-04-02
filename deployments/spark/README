@@ -1,0 +1,19 @@
+kubectl create namespace kubedata-spark-operator
+kubectl create namespace kubedata-spark-jobs
+
+
+helm repo add spark-operator https://kubeflow.github.io/spark-operator/
+
+
+helm install  spark-operator/spark-operator --namespace spark-operator --set webhook.enable=true --generate-name
+
+helm install  spark-operator spark-operator/spark-operator --namespace spark-operator --set webhook.enable=true --set sparkJobNamespace=spark-jobs
+
+kubectl create serviceaccount spark -n spark-jobs
+
+kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=spark-jobs:spark --namespace=spark-jobs
+
+kubectl -n spark-jobs  apply -f airflow-role.yaml
+
+
+https://sigmoidanalytics.medium.com/process-workflow-for-running-spark-application-on-kubernetes-using-airflow-f09b6dc3cbf3

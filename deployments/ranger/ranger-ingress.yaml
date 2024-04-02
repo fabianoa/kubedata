@@ -1,0 +1,30 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ranger-ui
+  namespace: ranger-bigdata
+  labels:
+    name: ranger-ui
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/upstream-vhost: "localhost:6080"
+    nginx.ingress.kubernetes.io/proxy-redirect-from: "http://localhost:6080"
+    nginx.ingress.kubernetes.io/proxy-redirect-to: "https://ranger-bigdata.app.sema.df.gov.br"
+spec:
+  tls:
+  - hosts:
+    - ranger-bigdata.app.sema.df.gov.br
+  rules:
+  - host: ranger-bigdata.app.sema.df.gov.br
+    http:
+      paths:
+      - path: "/"
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: ranger-svc
+            port:
+              number: 6080

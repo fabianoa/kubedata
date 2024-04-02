@@ -1,0 +1,14 @@
+
+mc alias set myminio http://localhost:9000 minio minio123
+
+
+
+mc admin config set myminio  identity_ldap identity_ldap_server_insecure="on" server_addr=openldap-svc.kubedata-openldap.svc.cluster.local:389 lookup_bind_dn="cn=usersync,ou=People,dc=poc,dc=br" lookup_bind_password="usersync" user_dn_search_base_dn="ou=People,dc=poc,dc=br" user_dn_search_filter="(cn=%s)"
+
+mc admin service restart myminio
+
+mc admin user list myminio
+mc admin user info myminio cn=fabiano.alencar,ou=People,dc=poc,dc=br
+
+
+mc idp ldap  policy attach myminio  readonly --user='cn=fabiano.alencar,ou=People,dc=poc,dc=br'
